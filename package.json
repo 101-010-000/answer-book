@@ -6,6 +6,8 @@
   "author": "wuxinyu",
   "scripts": {
     "build": "vite build",
+    "cf:preview": "pnpm run build && wrangler dev",
+    "deploy": "pnpm run build && wrangler deploy",
     "dev": "vite --port 3333 --open",
     "lint": "eslint .",
     "typecheck": "vue-tsc",
@@ -40,7 +42,8 @@
     "unplugin-vue-macros": "catalog:build",
     "vite": "catalog:build",
     "vitest": "catalog:dev",
-    "vue-tsc": "catalog:dev"
+    "vue-tsc": "catalog:dev",
+    "wrangler": "catalog:build"
   },
   "resolutions": {
     "unplugin": "catalog:build",

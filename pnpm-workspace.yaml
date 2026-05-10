@@ -1,6 +1,18 @@
 shellEmulator: true
 
 trustPolicy: no-downgrade
+trustPolicyExclude:
+  - '@oxc-resolver/binding-darwin-arm64@4.2.0'
+  - '@oxc-resolver/binding-darwin-x64@4.2.0'
+  - '@oxc-resolver/binding-freebsd-x64@4.2.0'
+  - '@oxc-resolver/binding-linux-arm-gnueabihf@4.2.0'
+  - '@oxc-resolver/binding-linux-arm64-gnu@4.2.0'
+  - '@oxc-resolver/binding-linux-arm64-musl@4.2.0'
+  - '@oxc-resolver/binding-linux-x64-gnu@4.2.0'
+  - '@oxc-resolver/binding-linux-x64-musl@4.2.0'
+  - '@oxc-resolver/binding-wasm32-wasi@4.2.0'
+  - '@oxc-resolver/binding-win32-arm64-msvc@4.2.0'
+  - '@oxc-resolver/binding-win32-x64-msvc@4.2.0'
 
 packages: []
 catalogs:
@@ -14,6 +26,7 @@ catalogs:
     unplugin-vue-components: ^31.0.0
     unplugin-vue-macros: ^2.14.5
     vite: ^7.3.1
+    wrangler: ^4.90.0
   dev:
     '@antfu/eslint-config': ^7.6.1
     '@types/node': ^25.3.3
