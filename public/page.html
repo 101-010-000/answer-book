@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>答案之书 | The Book of Answers</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400&family=Playfair+Display:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ========== Reset & Base ========== */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --book-width: 280px;
+        --book-height: 380px;
+        --bg-dark: #0a0a1a;
+        --bg-black: #000000;
+        --cover-bg: #2a0a0a;
+        --gold: #c9a96e;
+        --gold-light: #e0c992;
+        --gold-dim: #8a7040;
+        --page-bg: #f5e6c8;
+        --page-text: #3a2a1a;
+        --page-line: #d4c4a0;
+        --blue-glow: #4a6fa5;
+        --font-serif: 'Noto Serif SC', 'Georgia', serif;
+        --font-sans: 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+        --font-display: 'Playfair Display', 'Georgia', serif;
+      }
+
+      @media (min-width: 768px) {
+        :root {
+          --book-width: 320px;
+          --book-height: 440px;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        :root {
+          --book-width: 360px;
+          --book-height: 480px;
+        }
+      }
+
+      html {
+        font-size: 16px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-black) 100%);
+        color: #e0d8cc;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* ========== Particles ========== */
+      #particles-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(201, 169, 110, 0.9), rgba(201, 169, 110, 0.1) 60%, transparent);
+        pointer-events: none;
+        animation: particleFloat linear infinite;
+        will-change: transform, opacity;
+      }
+
+      @keyframes particleFloat {
+        0% {
+          opacity: 0;
+          transform: translateY(0) translateX(0) scale(0.5);
+        }
+        15% {
+          opacity: 0.8;
+        }
+        50% {
+          opacity: 0.3;
+          transform: translateY(-120px) translateX(40px) scale(1);
+        }
+        85% {
+          opacity: 0.7;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-240px) translateX(-20px) scale(0.5);
+        }
+      }
+
+      /* ========== Main Container ========== */
+      #app {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1rem;
+        max-width: 600px;
+        width: 100%;
+      }
+
+      /* ========== Header ========== */
+      #header {
+        text-align: center;
+        margin-bottom: 2rem;
+        animation: fadeInUp 1.2s ease-out;
+      }
+
+      #header h1 {
+        font-family: var(--font-serif);
+        font-size: clamp(2rem, 6vw, 3rem);
+        font-weight: 700;
+        color: var(--gold);
+        letter-spacing: 0.3em;
+        text-shadow: 0 0 30px rgba(201, 169, 110, 0.3);
+        margin-bottom: 0.5rem;
+      }
+
+      #header .subtitle {
+        font-family: var(--font-display);
+        font-size: clamp(0.8rem, 2vw, 1rem);
+        color: var(--gold-dim);
+        letter-spacing: 0.2em;
+        font-weight: 400;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ========== Book Section ========== */
+      #book-section {
+        margin-bottom: 2rem;
+        animation: fadeInUp 1.2s ease-out 0.3s both;
+      }
+
+      #book-container {
+        perspective: 1500px;
+        perspective-origin: 50% 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #book {
+        transform-style: preserve-3d;
+        position: relative;
+        width: var(--book-width);
+        height: var(--book-height);
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      /* Book shadow */
+      #book::after {
+        content: '';
+        position: absolute;
+        bottom: -20px;
+        left: 10%;
+        width: 80%;
+        height: 30px;
+        background: radial-gradient(ellipse, rgba(0, 0, 0, 0.5) 0%, transparent 70%);
+        filter: blur(10px);
+        transition: opacity 0.5s;
+      }
+
+      /* ========== Book Cover ========== */
+      .book-cover {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        transform-origin: left center;
+        transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+        backface-visibility: hidden;
+        z-index: 3;
+        border-radius: 2px 8px 8px 2px;
+        background: linear-gradient(145deg, #3a1515 0%, var(--cover-bg) 40%, #1a0505 100%);
+        box-shadow:
+          2px 2px 10px rgba(0, 0, 0, 0.5),
+          inset 0 0 30px rgba(0, 0, 0, 0.3),
+          inset -2px 0 8px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+
+      .book-cover::before {
+        content: '';
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        border: 1px solid var(--gold-dim);
+        border-radius: 1px;
+        opacity: 0.6;
+      }
+
+      .book-cover::after {
+        content: '';
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        right: 18px;
+        bottom: 18px;
+        border: 1px solid rgba(201, 169, 110, 0.2);
+        border-radius: 1px;
+      }
+
+      .cover-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 2rem;
+        text-align: center;
+      }
+
+      .cover-ornament {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 1.5rem;
+        position: relative;
+      }
+
+      .cover-ornament::before,
+      .cover-ornament::after {
+        content: '';
+        position: absolute;
+        border: 1px solid var(--gold-dim);
+      }
+
+      .cover-ornament::before {
+        top: 50%;
+        left: 50%;
+        width: 50px;
+        height: 50px;
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+
+      .cover-ornament::after {
+        top: 50%;
+        left: 50%;
+        width: 30px;
+        height: 30px;
+        transform: translate(-50%, -50%) rotate(45deg);
+        border-color: var(--gold);
+      }
+
+      .cover-star {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 8px;
+        height: 8px;
+        background: var(--gold);
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(201, 169, 110, 0.5);
+      }
+
+      .cover-content h2 {
+        font-family: var(--font-serif);
+        font-size: clamp(1.5rem, 4vw, 1.8rem);
+        color: var(--gold);
+        letter-spacing: 0.2em;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 0 20px rgba(201, 169, 110, 0.2);
+      }
+
+      .cover-content p {
+        font-family: var(--font-sans);
+        font-size: clamp(0.75rem, 2vw, 0.9rem);
+        color: var(--gold-dim);
+        line-height: 1.8;
+        letter-spacing: 0.1em;
+        font-weight: 300;
+      }
+
+      .book-cover.flipped {
+        transform: rotateY(-160deg);
+      }
+
+      /* ========== Book Page (flip layer) ========== */
+      .book-page {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        transform-origin: left center;
+        transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1) 0.3s;
+        backface-visibility: hidden;
+        z-index: 2;
+        border-radius: 2px 8px 8px 2px;
+      }
+
+      .page-front {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(145deg, #f8edd5 0%, var(--page-bg) 50%, #e8d5b0 100%);
+        border-radius: 2px 8px 8px 2px;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backface-visibility: hidden;
+      }
+
+      .page-front-pattern {
+        width: 80px;
+        height: 80px;
+        opacity: 0.15;
+      }
+
+      .page-front-pattern::before {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 2px solid var(--page-text);
+        border-radius: 50%;
+      }
+
+      .page-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(145deg, #f8edd5 0%, var(--page-bg) 50%, #e8d5b0 100%);
+        border-radius: 2px 8px 8px 2px;
+        transform: rotateY(180deg);
+        backface-visibility: hidden;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem;
+        text-align: center;
+      }
+
+      .book-page.flipped {
+        transform: rotateY(-180deg);
+      }
+
+      /* ========== Book Back (base layer) ========== */
+      .book-back {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background: linear-gradient(145deg, #f8edd5 0%, var(--page-bg) 50%, #e8d5b0 100%);
+        border-radius: 2px 8px 8px 2px;
+        box-shadow:
+          inset 0 0 20px rgba(0, 0, 0, 0.05),
+          3px 3px 15px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem;
+        text-align: center;
+        z-index: 1;
+      }
+
+      /* Page lines decoration */
+      .page-lines {
+        position: absolute;
+        top: 15%;
+        left: 15%;
+        right: 15%;
+        bottom: 15%;
+      }
+
+      .page-lines::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--page-line);
+        box-shadow:
+          0 30px 0 var(--page-line),
+          0 60px 0 var(--page-line),
+          0 90px 0 var(--page-line),
+          0 120px 0 var(--page-line),
+          0 150px 0 var(--page-line),
+          0 180px 0 var(--page-line),
+          0 210px 0 var(--page-line),
+          0 240px 0 var(--page-line);
+        opacity: 0.4;
+      }
+
+      /* ========== Answer Text ========== */
+      #answer-text {
+        font-family: var(--font-serif);
+        font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+        color: var(--page-text);
+        line-height: 1.8;
+        letter-spacing: 0.05em;
+        min-height: 3em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      #answer-text .cursor {
+        display: inline-block;
+        width: 2px;
+        height: 1.2em;
+        background: var(--page-text);
+        margin-left: 2px;
+        animation: blink 0.8s step-end infinite;
+        vertical-align: middle;
+      }
+
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+
+      #page-number {
+        position: absolute;
+        bottom: 1.5rem;
+        font-family: var(--font-display);
+        font-size: 0.85rem;
+        color: var(--page-line);
+        letter-spacing: 0.1em;
+      }
+
+      /* ========== Meditation Overlay ========== */
+      #meditation-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.8s ease;
+      }
+
+      #meditation-overlay.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      #meditation-text {
+        font-family: var(--font-serif);
+        font-size: clamp(1.2rem, 3vw, 1.5rem);
+        color: var(--gold);
+        letter-spacing: 0.15em;
+        text-align: center;
+        line-height: 2;
+        animation: breathe 3s ease-in-out infinite;
+      }
+
+      @keyframes breathe {
+        0%,
+        100% {
+          opacity: 0.5;
+          transform: scale(0.98);
+        }
+        50% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* ========== Instructions ========== */
+      #instructions {
+        text-align: center;
+        margin-bottom: 2rem;
+        animation: fadeInUp 1.2s ease-out 0.6s both;
+      }
+
+      #instructions p {
+        font-size: clamp(0.8rem, 2vw, 0.95rem);
+        color: rgba(201, 169, 110, 0.5);
+        line-height: 1.8;
+        letter-spacing: 0.05em;
+        font-weight: 300;
+      }
+
+      /* ========== Buttons ========== */
+      #action-area {
+        animation: fadeInUp 1.2s ease-out 0.9s both;
+      }
+
+      .btn {
+        font-family: var(--font-serif);
+        font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+        color: var(--gold);
+        background: transparent;
+        border: 1px solid var(--gold-dim);
+        padding: 0.8rem 2.5rem;
+        letter-spacing: 0.15em;
+        cursor: pointer;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+        border-radius: 2px;
+      }
+
+      .btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(201, 169, 110, 0.1);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition:
+          width 0.6s ease,
+          height 0.6s ease;
+      }
+
+      .btn:hover::before {
+        width: 300px;
+        height: 300px;
+      }
+
+      .btn:hover {
+        border-color: var(--gold);
+        box-shadow:
+          0 0 20px rgba(201, 169, 110, 0.2),
+          inset 0 0 20px rgba(201, 169, 110, 0.05);
+      }
+
+      .btn:active {
+        transform: scale(0.97);
+      }
+
+      .btn:focus-visible {
+        outline: 2px solid var(--gold);
+        outline-offset: 4px;
+      }
+
+      .btn.hidden {
+        display: none;
+      }
+
+      /* ========== Footer ========== */
+      #footer {
+        margin-top: 3rem;
+        text-align: center;
+        animation: fadeInUp 1.2s ease-out 1.2s both;
+      }
+
+      #footer p {
+        font-size: 0.75rem;
+        color: rgba(201, 169, 110, 0.25);
+        letter-spacing: 0.1em;
+      }
+
+      /* ========== Answer Glow Effect ========== */
+      .answer-glow {
+        animation: answerGlow 2s ease-in-out infinite;
+      }
+
+      @keyframes answerGlow {
+        0%,
+        100% {
+          text-shadow: 0 0 5px rgba(58, 42, 26, 0.1);
+        }
+        50% {
+          text-shadow: 0 0 15px rgba(201, 169, 110, 0.3);
+        }
+      }
+
+      /* ========== Reduced Motion ========== */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+        .particle {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Particles -->
+    <div id="particles-container"></div>
+
+    <!-- Meditation Overlay -->
+    <div id="meditation-overlay">
+      <p id="meditation-text">闭上眼睛<br />在心中默念你的问题</p>
+    </div>
+
+    <!-- Main App -->
+    <main id="app">
+      <header id="header">
+        <h1>答案之书</h1>
+        <p class="subtitle">THE BOOK OF ANSWERS</p>
+      </header>
+
+      <section id="book-section">
+        <div id="book-container">
+          <div id="book">
+            <!-- Cover -->
+            <div class="book-cover" id="book-cover">
+              <div class="cover-content">
+                <div class="cover-ornament">
+                  <div class="cover-star"></div>
+                </div>
+                <h2>答案之书</h2>
+                <p>心中默念你的问题</p>
+                <p>然后翻开这一页</p>
+              </div>
+            </div>
+
+            <!-- Flip Page -->
+            <div class="book-page" id="book-page">
+              <div class="page-front">
+                <div class="page-front-pattern"></div>
+              </div>
+            </div>
+
+            <!-- Book Base (answer displayed here) -->
+            <div class="book-back">
+              <div class="page-lines"></div>
+              <p id="answer-text"></p>
+              <span id="page-number"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="instructions">
+        <p>闭上眼睛，在心中默念你的问题</p>
+        <p>然后点击下方按钮，获得你的答案</p>
+      </section>
+
+      <div id="action-area">
+        <button class="btn" id="ask-btn" aria-label="向答案之书提问">向答案之书提问</button>
+        <button class="btn hidden" id="reset-btn" aria-label="再问一次">再问一次</button>
+      </div>
+
+      <footer id="footer">
+        <p>灵感源自 Carol Bolt 的《The Book of Answers》</p>
+      </footer>
+    </main>
+
+    <script>
+      // ========== Answer Data ==========
+      const answers = [
+        // 积极/肯定类 (35)
+        '毫无疑问',
+        '肯定的',
+        '没错',
+        '你将取得成功',
+        '不会后悔的',
+        '不会失望的',
+        '好运将会降临',
+        '会特别顺利',
+        '会很顺利',
+        '大胆一点',
+        '大方一点',
+        '继续前进',
+        '答案就在你身边',
+        '车到山前必有路',
+        '放轻松点，慢慢来',
+        '不用担心',
+        '值得一试',
+        '是的',
+        '当然可以',
+        '去做吧',
+        '相信自己',
+        '时机已到',
+        '一切都会好的',
+        '前方有光',
+        '会有好事发生',
+        '勇敢地迈出那一步',
+        '你准备好了',
+        '顺其自然就好',
+        '会有回报的',
+        '坚持下去',
+        '一定会实现的',
+        '这是对的',
+        '放手去做',
+        '值得等待',
+        '前途光明',
+
+        // 消极/否定类 (25)
+        '不',
+        '绝对不',
+        '别想了',
+        '不要抱期望',
+        '不要浪费你的时间了',
+        '不要浪费精力',
+        '不要做得过火了',
+        '会后悔的',
+        '会很不顺利',
+        '会付出代价',
+        '会失去自我',
+        '现在不行',
+        '时机未到',
+        '放弃吧',
+        '别再纠缠了',
+        '这不是你想要的',
+        '趁早放弃',
+        '不会有结果的',
+        '别自欺欺人了',
+        '算了吧',
+        '别再执着了',
+        '不值得',
+        '不会有改变的',
+        '别冒险',
+        '停下来想想',
+
+        // 中性/建议类 (35)
+        '等等',
+        '换个角度想想',
+        '要求不要太高',
+        '这是必然的，不要抗拒',
+        '木已成舟',
+        '管它呢',
+        '结果可能让人惊讶',
+        '你必须解决一些相关的问题',
+        '得真正地努力一下',
+        '还有别的选择',
+        '你说了算',
+        '你心里已经有答案了',
+        '忽略了一件显而易见的事',
+        '别太赶了',
+        '不然呢',
+        '需要更多时间',
+        '先问问自己',
+        '再想想',
+        '顺其自然',
+        '看看周围',
+        '也许吧',
+        '不一定',
+        '都有可能',
+        '取决于你的选择',
+        '再等等看',
+        '先做好眼前的事',
+        '换个方向试试',
+        '问问别人的意见',
+        '别急',
+        '冷静一下',
+        '三思而后行',
+        '看看再说',
+        '也许不是你想的那样',
+        '事情没那么简单',
+        '别想太多',
+        '这是个错误',
+
+        // 哲思/感悟类 (25)
+        '人生没有标准答案',
+        '接受不确定性',
+        '拥抱变化',
+        '过程比结果更重要',
+        '有些事不需要答案',
+        '时间会告诉你',
+        '相信直觉',
+        '一切都是最好的安排',
+        '放下执念',
+        '简单一点',
+        '回归本心',
+        '享受当下',
+        '不必完美',
+        '允许自己犯错',
+        '慢慢来',
+        '每一步都算数',
+        '你比想象中更强大',
+        '答案在风中',
+        '去感受，不要只思考',
+        '有些路只能一个人走',
+        '接受现实',
+        '无论如何，生活继续',
+        '做自己就好',
+        '尽人事，听天命',
+        '现在就是最好的时机',
+      ]
+
+      // ========== State ==========
+      const state = {
+        isAnimating: false,
+        currentAnswer: null,
+        lastAnswerIndex: -1,
+      }
+
+      // ========== DOM Elements ==========
+      const bookCover = document.getElementById('book-cover')
+      const bookPage = document.getElementById('book-page')
+      const answerText = document.getElementById('answer-text')
+      const pageNumber = document.getElementById('page-number')
+      const askBtn = document.getElementById('ask-btn')
+      const resetBtn = document.getElementById('reset-btn')
+      const meditationOverlay = document.getElementById('meditation-overlay')
+      const meditationText = document.getElementById('meditation-text')
+      const book = document.getElementById('book')
+
+      // ========== Utility Functions ==========
+      function delay(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms))
+      }
+
+      function getRandomAnswer() {
+        let index
+        do {
+          index = Math.floor(Math.random() * answers.length)
+        } while (index === state.lastAnswerIndex && answers.length > 1)
+        state.lastAnswerIndex = index
+        return answers[index]
+      }
+
+      // ========== Particles ==========
+      function createParticles() {
+        const container = document.getElementById('particles-container')
+        const isMobile = window.innerWidth < 768
+        const count = isMobile ? 15 : window.innerWidth < 1024 ? 20 : 30
+
+        for (let i = 0; i < count; i++) {
+          const particle = document.createElement('div')
+          particle.className = 'particle'
+          particle.style.left = Math.random() * 100 + '%'
+          particle.style.top = Math.random() * 100 + '%'
+          particle.style.animationDuration = 5 + Math.random() * 10 + 's'
+          particle.style.animationDelay = Math.random() * 8 + 's'
+          const size = 2 + Math.random() * 4
+          particle.style.width = size + 'px'
+          particle.style.height = size + 'px'
+          container.appendChild(particle)
+        }
+      }
+
+      // ========== Mouse Follow (Desktop) ==========
+      function initMouseFollow() {
+        if ('ontouchstart' in window) return
+
+        const container = document.getElementById('book-container')
+        container.addEventListener('mousemove', (e) => {
+          if (state.isAnimating) return
+          const rect = container.getBoundingClientRect()
+          const x = (e.clientX - rect.left) / rect.width - 0.5
+          const y = (e.clientY - rect.top) / rect.height - 0.5
+          book.style.transform = `rotateY(${x * 8}deg) rotateX(${-y * 5}deg)`
+        })
+
+        container.addEventListener('mouseleave', () => {
+          book.style.transform = 'rotateY(0) rotateX(0)'
+        })
+      }
+
+      // ========== Typewriter Effect ==========
+      function typeAnswer(text) {
+        return new Promise((resolve) => {
+          answerText.innerHTML = ''
+          let i = 0
+          const cursor = document.createElement('span')
+          cursor.className = 'cursor'
+
+          const interval = setInterval(() => {
+            if (i < text.length) {
+              answerText.textContent = text.substring(0, i + 1)
+              answerText.appendChild(cursor)
+              i++
+            } else {
+              clearInterval(interval)
+              // Remove cursor after a short delay
+              setTimeout(() => {
+                if (cursor.parentNode) cursor.remove()
+                answerText.classList.add('answer-glow')
+                resolve()
+              }, 500)
+            }
+          }, 100)
+        })
+      }
+
+      // ========== Core Actions ==========
+      async function askQuestion() {
+        if (state.isAnimating) return
+        state.isAnimating = true
+
+        // 1. Show meditation overlay
+        meditationOverlay.classList.add('active')
+
+        // 2. Wait for meditation
+        await delay(3000)
+
+        // 3. Hide overlay
+        meditationOverlay.classList.remove('active')
+        await delay(500)
+
+        // 4. Get random answer
+        const answer = getRandomAnswer()
+        state.currentAnswer = answer
+
+        // 5. Flip the cover
+        bookCover.classList.add('flipped')
+
+        // 6. Wait for cover flip
+        await delay(800)
+
+        // 7. Flip the page
+        bookPage.classList.add('flipped')
+
+        // 8. Wait for page flip
+        await delay(1000)
+
+        // 9. Show answer with typewriter effect
+        await typeAnswer(answer)
+
+        // 10. Show page number
+        const pageNum = Math.floor(Math.random() * 300) + 1
+        pageNumber.textContent = `— ${pageNum} —`
+
+        // 11. Toggle buttons
+        askBtn.classList.add('hidden')
+        resetBtn.classList.remove('hidden')
+
+        state.isAnimating = false
+      }
+
+      async function resetBook() {
+        if (state.isAnimating) return
+        state.isAnimating = true
+
+        // 1. Remove answer glow
+        answerText.classList.remove('answer-glow')
+
+        // 2. Clear answer
+        answerText.textContent = ''
+        pageNumber.textContent = ''
+
+        // 3. Close page
+        bookPage.classList.remove('flipped')
+        await delay(600)
+
+        // 4. Close cover
+        bookCover.classList.remove('flipped')
+        await delay(1000)
+
+        // 5. Toggle buttons
+        resetBtn.classList.add('hidden')
+        askBtn.classList.remove('hidden')
+
+        state.isAnimating = false
+      }
+
+      // ========== Event Listeners ==========
+      askBtn.addEventListener('click', askQuestion)
+      resetBtn.addEventListener('click', resetBook)
+
+      // Keyboard support
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          if (!askBtn.classList.contains('hidden')) {
+            askQuestion()
+          } else if (!resetBtn.classList.contains('hidden')) {
+            resetBook()
+          }
+        }
+      })
+
+      // ========== Init ==========
+      createParticles()
+      initMouseFollow()
+    </script>
+  </body>
+</html>
