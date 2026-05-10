@@ -1,7 +1,9 @@
 {
+  "name": "xx-answer-book",
   "type": "module",
   "private": true,
   "packageManager": "pnpm@10.30.3",
+  "author": "wuxinyu",
   "scripts": {
     "build": "vite build",
     "dev": "vite --port 3333 --open",
